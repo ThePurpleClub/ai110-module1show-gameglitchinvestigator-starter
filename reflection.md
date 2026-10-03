@@ -5,8 +5,13 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 ## 1. What was broken when you started?
 
 - What did the game look like the first time you ran it?
+  The game loaded as a normal Streamlit page with a difficulty dropdown, a guess box, Submit and New Game buttons and a debug panel, so it looked finished. Once I played it, the rules were wrong: the hints pointed the wrong way, and the numbers did not behave like the settings said.
 - List at least two concrete bugs you noticed at the start  
   (for example: "the hints were backwards").
+
+  1. The hints were backwards: a guess above the secret said "Go HIGHER" and a guess below said "Go LOWER".
+  2. On even-numbered attempts the secret was turned into a string, so the guess was compared as text. That gave wrong hints, for example "9" counted as higher than "10".
+  3. Hard difficulty used 1-50, which is a smaller range than Normal (1-100), so it was easier. The prompt also always said "1 and 100", and New Game ignored the difficulty's range.
 
 **Bug Reproduction Log**
 
@@ -14,9 +19,11 @@ Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error |
 |-------|-------------------|-----------------|------------------------|
-| | | | |
-| | | | |
-| | | | |
+| Secret is 50, guess 60 | Hint says "Go LOWER" | Hint said "Go HIGHER" | No error, just a wrong message |
+| Secret is 10, guess 9 on an even-numbered attempt (the 2nd guess) | "Too Low" / "Go HIGHER" | Treated as "Too High", because "9" > "10" as text | No error; the TypeError from comparing int and str was caught and hidden by a fallback |
+| Select Hard difficulty | A larger range than Normal | Range was 1-50, smaller than Normal's 1-100 | None; the sidebar showed "Range: 1 to 50" |
+| Select Easy, then click New Game | New secret within 1-20 | Secret was picked from 1-100 | None; visible in Developer Debug Info |
+| Type "abc" and submit | Error message, no attempt used | Error shown, but an attempt was still used up | None |
 
 ---
 
