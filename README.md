@@ -25,28 +25,59 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+- [x] Describe the game's purpose.
+- [x] Detail which bugs you found.
+- [x] Explain what fixes you applied.
+
+**Game's purpose**
+
+A Streamlit number-guessing game. The player picks a difficulty, guesses a secret number within a range, and gets "Go HIGHER" or "Go LOWER" hints. They have a limited number of attempts, and a score rewards winning quickly.
+
+**Bugs found**
+
+- Hints were reversed (a high guess said "Go HIGHER").
+- On even attempts the secret was converted to a string, so comparisons were wrong and you couldn't win.
+- Scoring was inconsistent: win points were off by one, and "Too High" sometimes added points.
+- Hard (1-50) was easier than Normal (1-100).
+- The prompt always said "1 and 100", and New Game ignored the difficulty's range.
+- The secret was not regenerated when difficulty changed.
+- Attempts started at 1 at first load but 0 after New Game, and invalid input cost an attempt.
+- New Game didn't reset score, status or history.
+- Decimals like "7.9" were truncated, and out-of-range guesses were accepted.
+
+**Fixes applied**
+
+- Corrected the hint messages and always compare ints.
+- Fixed the scoring formula, with -5 for every wrong guess.
+- Hard is now 1-200, and the prompt uses the real range.
+- The secret and state reset when difficulty changes, using a shared `reset_game` helper.
+- Attempts are counted only for valid guesses, starting at 0.
+- `parse_guess` rejects decimals and out-of-range numbers.
+- Moved the game logic into `logic_utils.py` and added pytest regression tests.
 
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. Run `python -m streamlit run app.py` and choose a difficulty in the sidebar (the range and attempt limit update).
+2. Type a whole number in the range and click **Submit Guess**.
+3. Read the hint: a guess above the secret says "Go LOWER", below says "Go HIGHER".
+4. Each wrong guess costs 5 points and uses an attempt; "Attempts left" counts down.
+5. Guess the secret to win and see the balloons and final score, or run out of attempts and see the game-over message.
+6. Click **New Game** to reset the score, history and secret.
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+$ python3 -m pytest tests/
+============================= test session starts ==============================
+collected 10 items
+
+tests/test_game_logic.py ..........                                      [100%]
+
+============================== 10 passed in 0.01s ==============================
 ```
 
 ## 🚀 Stretch Features
